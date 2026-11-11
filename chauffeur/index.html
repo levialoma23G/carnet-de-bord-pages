@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Versement chauffeur</title>
+<style>
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/bricolage-grotesque-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/bricolage-grotesque-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
+:root{color-scheme:light}
+</style>
+</head>
+<body>
+<style>
+/* Concept : le bout de papier que le chauffeur tend au propriétaire. Une seule colonne, des gros boutons, un message prêt à envoyer. */
+:root{
+  --bg:#EDF1F5; --surface:#FFFFFF; --surface-2:#E4EAF0; --ink:#12202D; --ink-2:#44566A; --ink-3:#5B6D82; --line:#D3DBE4;
+  --accent:#F2B21B; --on-accent:#1B1500; --focus:#1F5FBF; --bad:#B8321F; --wa:#128C4A; --on-wa:#FFFFFF;
+  --font-display:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D151D; --surface:#16212B; --surface-2:#1F2D3A; --ink:#E9EFF4; --ink-2:#AEBBC7; --ink-3:#8C9CAB; --line:#2B3B4A;
+    --focus:#6EA8F2; --bad:#F27B6B; --wa:#2BB673; --on-wa:#06180E; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D151D; --surface:#16212B; --surface-2:#1F2D3A; --ink:#E9EFF4; --ink-2:#AEBBC7; --ink-3:#8C9CAB; --line:#2B3B4A;
+  --focus:#6EA8F2; --bad:#F27B6B; --wa:#2BB673; --on-wa:#06180E; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--font-body);-webkit-text-size-adjust:100%;
+  padding-block:12px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2,p{margin:0}
+.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+h1{font:700 28px/1.1 var(--font-display);letter-spacing:-.01em;margin-top:2px;text-wrap:balance}
+.lead{color:var(--ink-2);margin-top:8px}
+form{display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.f label,.f .lab{font-size:13px;font-weight:600;color:var(--ink-2)}
+input{font:inherit;color:inherit;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;width:100%;min-width:0}
+input::placeholder{color:var(--ink-3)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:360px){.two{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:500 15px var(--font-body);color:var(--ink);cursor:pointer}
+.chip[aria-checked="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn{min-height:50px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font:600 16px var(--font-body);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:var(--on-wa)}
+.err{color:var(--bad);font-size:14px;font-weight:500}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.out h2{font:700 19px var(--font-display)}
+.msg{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface-2);border-radius:12px;padding:12px;font-size:15px}
+.msg .tag{display:block;margin-top:10px;font:400 12px/1.4 var(--font-mono);color:var(--ink-3)}
+.hint{font-size:13px;color:var(--ink-3)}
+.actions{display:flex;flex-direction:column;gap:8px}
+.hist{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--ink-2);padding:0;margin:0;list-style:none}
+.hist li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.hist li:first-child{border-top:0}
+.hist span:last-child{color:var(--ink-3);white-space:nowrap}
+h2.s{font:700 17px var(--font-display);margin-bottom:6px}
+</style>
+
+<div id="app">
+  <header>
+    <p class="eyebrow">Carnet de bord</p>
+    <h1>Message au propriétaire</h1>
+    <p class="lead">Remplissez, puis envoyez le message sur WhatsApp. Le propriétaire l’enregistre en un geste.</p>
+  </header>
+
+  <form id="f" novalidate>
+    <div class="f"><span class="lab">Que voulez-vous signaler ?</span>
+      <div class="chips" id="types" role="radiogroup" aria-label="Type de message"></div></div>
+    <div class="two">
+      <div class="f"><label for="nom">Votre nom</label><input id="nom" maxlength="40" autocomplete="name" placeholder="Ex. Issa"></div>
+      <div class="f"><label for="plaque">Plaque du véhicule</label><input id="plaque" maxlength="20" autocomplete="off" placeholder="Ex. 1234 AB 01"></div>
+    </div>
+    <div class="two">
+      <div class="f"><label for="date">Date</label><input type="date" id="date"></div>
+      <div class="f"><label for="val" id="val-l">Montant</label><input id="val" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+    </div>
+    <div class="f" id="dev-wrap"><span class="lab">Monnaie</span><div class="chips" id="dev" role="radiogroup" aria-label="Monnaie"></div></div>
+    <div class="f"><label for="note">Note (facultatif)</label><input id="note" maxlength="100" autocomplete="off" placeholder="Ex. plein de 40 L, panne de batterie"></div>
+    <p class="err" id="err" role="alert" hidden></p>
+    <button type="submit" class="btn primary">Préparer le message</button>
+  </form>
+
+  <section class="out" id="out" hidden aria-label="Message prêt">
+    <h2>Message prêt</h2>
+    <div class="msg" id="msg"></div>
+    <div class="actions">
+      <a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">Envoyer sur WhatsApp</a>
+      <button type="button" class="btn" id="copy">Copier le message</button>
+    </div>
+    <p class="hint">WhatsApp s’ouvre : choisissez le propriétaire dans la liste. Envoyez le message tel quel, sans modifier la dernière ligne.</p>
+  </section>
+
+  <section id="hist-wrap" hidden><h2 class="s">Derniers messages préparés</h2><ul class="hist" id="hist"></ul></section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var TYPES=[{k:'vers',label:'Versement'},{k:'carb',label:'Carburant'},{k:'gar',label:'Garage'},{k:'pieces',label:'Pièces'},{k:'autres',label:'Autre dépense'},{k:'km',label:'Kilométrage'}];
+var DEV={USD:'$',CDF:'FC',XOF:'F'};
+var HEAD={vers:'Versement du ',carb:'Carburant payé le ',gar:'Dépense garage le ',pieces:'Pièces achetées le ',autres:'Dépense le '};
+var $=function(s){return document.querySelector(s);};
+function jget(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function pad(n){return String(n).padStart(2,'0');}
+function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function clean(s){return String(s||'').replace(/[|\[\]\r\n]+/g,' ').replace(/\s+/g,' ').trim();}
+function parse(s){var t=String(s||'').replace(/[\s  ]/g,'').replace(',','.');if(!/^\d*\.?\d*$/.test(t)||t===''||t==='.')return NaN;return Math.round(parseFloat(t)*100)/100;}
+function fmt(n){return n.toLocaleString('fr-FR',{maximumFractionDigits:2}).replace(/[  ]/g,' ');}
+function valid(d){return /^\d{4}-\d{2}-\d{2}$/.test(d||'')&&!isNaN(Date.parse(d));}
+
+var saved=jget('cdb-chauffeur-v1')||{};
+var type=saved.type||'vers',dev=DEV[saved.dev]?saved.dev:'USD',hist=saved.hist||[];
+$('#nom').value=saved.nom||'';$('#plaque').value=saved.plaque||'';$('#date').value=today();
+
+function paint(){
+  $('#types').innerHTML=TYPES.map(function(t){return '<button type="button" class="chip" role="radio" data-t="'+t.k+'" aria-checked="'+(t.k===type)+'">'+t.label+'</button>';}).join('');
+  $('#dev').innerHTML=Object.keys(DEV).map(function(k){return '<button type="button" class="chip" role="radio" data-d="'+k+'" aria-checked="'+(k===dev)+'">'+DEV[k]+'</button>';}).join('');
+  $('#val-l').textContent=type==='km'?'Kilométrage au compteur (km)':'Montant ('+DEV[dev]+')';
+  $('#dev-wrap').hidden=type==='km';
+  var h=$('#hist');$('#hist-wrap').hidden=!hist.length;
+  h.innerHTML=hist.map(function(x){return '<li><span>'+x.t+'</span><span>'+x.d+'</span></li>';}).join('');
+}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-t]'),d=e.target.closest('[data-d]');
+  if(t){type=t.dataset.t;paint();}
+  if(d){dev=d.dataset.d;paint();}
+});
+function showErr(m){var x=$('#err');x.textContent=m;x.hidden=false;}
+
+$('#f').addEventListener('submit',function(e){
+  e.preventDefault();$('#err').hidden=true;
+  var v=parse($('#val').value),date=$('#date').value;
+  if(isNaN(v)||v<=0)return showErr(type==='km'?'Saisissez le kilométrage lu au compteur.':'Saisissez un montant supérieur à 0, avec des chiffres seulement.');
+  if(!valid(date))return showErr('Choisissez une date.');
+  if(type==='km')v=Math.round(v);
+  var nom=clean($('#nom').value),plaque=clean($('#plaque').value),note=clean($('#note').value);
+  if(!nom&&!plaque)return showErr('Indiquez votre nom ou la plaque du véhicule pour que le propriétaire sache de quel véhicule il s’agit.');
+  var dd=date.split('-').reverse().join('/'),sym=DEV[dev];
+  var head=type==='km'?'Kilométrage au '+dd+' : '+fmt(v)+' km':HEAD[type]+dd+' : '+fmt(v)+' '+sym;
+  var who=[nom&&'Chauffeur : '+nom,plaque&&'Véhicule : '+plaque].filter(Boolean).join(' · ');
+  var tag='[CDB1|'+type+'|'+date+'|'+String(v)+'|'+plaque.replace(/\s/g,'')+'|'+nom+'|'+note+']';
+  var human=[head,who,note&&'Note : '+note].filter(Boolean).join('\n');
+  var full=human+'\n\n'+tag;
+  var msg=$('#msg');msg.textContent=human;
+  var sp=document.createElement('span');sp.className='tag';sp.textContent=tag;msg.appendChild(sp);
+  $('#wa').href='https://wa.me/?text='+encodeURIComponent(full);
+  $('#copy').dataset.full=full;$('#copy').textContent='Copier le message';
+  $('#out').hidden=false;
+  var label=(TYPES.filter(function(t){return t.k===type;})[0]||{}).label;
+  hist.unshift({t:label+' · '+(type==='km'?fmt(v)+' km':fmt(v)+' '+sym),d:dd});hist=hist.slice(0,8);
+  jset('cdb-chauffeur-v1',{nom:nom,plaque:plaque,type:type,dev:dev,hist:hist});paint();
+  $('#out').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('#copy').addEventListener('click',function(){
+  var b=$('#copy'),full=b.dataset.full||'';
+  function ok(){b.textContent='Message copié';}
+  function fallback(){
+    var r=document.createRange();r.selectNodeContents($('#msg'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+    b.textContent='Sélectionné : copiez-le avec votre téléphone';
+  }
+  try{navigator.clipboard.writeText(full).then(ok,fallback);}catch(e){fallback();}
+});
+paint();
+})();
+</script>
+
+</body>
+</html>
